@@ -1,0 +1,9 @@
+﻿CREATE TABLE [dbo].[Member]
+(
+	[Id] INT IDENTITY,
+	[UserName] NVARCHAR(100) NOT NULL,
+	[Password] NVARCHAR(MAX) NOT NULL,
+	[Privilege] int NOT NULL,
+	CONSTRAINT PK_MEMBER PRIMARY KEY ([Id]),
+	CONSTRAINT CK_MEMBER_USERNAME CHECK ([UserName] != '')
+)
