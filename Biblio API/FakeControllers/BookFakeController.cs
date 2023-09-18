@@ -36,7 +36,7 @@ namespace Biblio_API.FakeControllers {
 
             try {
 
-                return _bookService.getBook( isbn );
+                return _bookService.GetBook( isbn );
             }
             catch (Exception e) {
 
@@ -45,16 +45,34 @@ namespace Biblio_API.FakeControllers {
             }
         }
 
-        public List<Book>? GetBooks() {
+        public List<BookShortDTO>? GetBooks() {
+
+            return _bookService.GetBooks().Select(b => b.toBookShort()).ToList();
+        }
+
+        public bool Update(int isbn,  BookFormDTO book ) {
 
             try {
 
-                return _bookService.getBooks();
+                return _bookService.Update( isbn, book.ToEntity() );
             }
             catch (Exception e) {
 
                 Console.WriteLine(e.Message);
-                return null;
+                return false;
+            }
+        }
+
+        public bool Delete(int isbn ) {
+
+            try {
+
+                return _bookService.Delete( isbn );
+            }
+            catch(Exception e) {
+
+                Console.WriteLine(e.Message);
+                return false;
             }
         }
     }

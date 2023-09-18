@@ -18,6 +18,7 @@ namespace Biblio_DAL.Repositories {
 
             _connection = @"Server=DESKTOP-95QLTBL;Database=BiblioDB;Trusted_Connection=True;";
         }
+
         private static void GenerateParameter( IDbCommand dbCommand, string parameterName, object? value ) {
 
             IDataParameter parameter = dbCommand.CreateParameter();
@@ -70,11 +71,6 @@ namespace Biblio_DAL.Repositories {
             }
         }
 
-
-        public bool Delete( int isbn ) {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<Book> ReadAll() {
             using( IDbConnection connection = new SqlConnection( _connection ) ) {
 
@@ -116,7 +112,49 @@ namespace Biblio_DAL.Repositories {
         }
 
         public bool Update( int isbn, Book book ) {
-            throw new NotImplementedException();
+
+            using(IDbConnection dbConnection = new SqlConnection(_connection)) {
+
+                using(IDbCommand dbCommand = dbConnection.CreateCommand()) {
+
+                    dbCommand.CommandText = @"UPDATE Book " +
+                                            "SET ISBN = @newIsbn, " +
+                                            "BookName = @newBookName ," +
+                                            "Description = @newDescription ," +
+                                            "Quantity = @newQuantity ," +
+                                            "Price = @newPrice ," +
+                                            "Genre = @newGenre " +
+                                            "WHERE ISBN = @isbn";
+
+                    GenerateParameter( dbCommand, "isbn", isbn );
+                    GenerateParameter( dbCommand, "newIsbn", book.Isbn );
+                    GenerateParameter( dbCommand, "newBookName", book.BookName );
+                    GenerateParameter( dbCommand, "newDescription", book.Description );
+                    GenerateParameter( dbCommand, "newQuantity", book.Quantity );
+                    GenerateParameter( dbCommand, "newPrice", book.Price );
+                    GenerateParameter( dbCommand, "newGenre", book.Genre );
+
+                    dbConnection.Open();
+                    return dbCommand.ExecuteNonQuery() == 1 ?  true : false;
+                }
+            }
+        }
+
+        public bool Delete( int isbn ) {
+
+            using(IDbConnection dbConnection = new SqlConnection(_connection) ) {
+
+                using(IDbCommand dbCommand = dbConnection.CreateCommand()) {
+
+                    dbCommand.CommandText = @"DELETE FROM Book 
+                                            WHERE ISBN = @isbn";
+
+                    GenerateParameter( dbCommand, "isbn", isbn );
+
+                    dbConnection.Open();
+                    return dbCommand.ExecuteNonQuery() == 1 ? true : false;
+                }
+            }
         }
     }
 }

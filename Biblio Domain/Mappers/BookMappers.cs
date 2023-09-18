@@ -21,5 +21,15 @@ namespace Biblio_Domain.Mappers {
                 Genre = dto.Genre
             };
         }
+        public static BookShortDTO toBookShort (this Book book) {
+
+            return new BookShortDTO {
+
+                Isbn = book.Isbn,
+                BookName = book.BookName,
+                Price = book.Price,
+            };
+        }
     }
+
 }

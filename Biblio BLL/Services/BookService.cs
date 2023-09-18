@@ -20,12 +20,22 @@ namespace Biblio_BLL.Services {
             return _bookRepository.Create( book );
         }
 
-        public Book getBook(int isbn ) {
+        public Book GetBook(int isbn ) {
             return _bookRepository.ReadOne( isbn );
         }
 
-        public List<Book> getBooks() {
-            return _bookRepository.ReadAll().ToList();
+        public IEnumerable<Book> GetBooks() {
+            return _bookRepository.ReadAll();
+        }
+
+        public bool Update(int isbn, Book book) {
+
+            return _bookRepository.Update( isbn, book ); 
+        }
+
+        public bool Delete(int isbn) {
+
+            return _bookRepository.Delete( isbn );
         }
     }
 }
