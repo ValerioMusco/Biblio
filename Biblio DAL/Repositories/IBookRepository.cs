@@ -1,4 +1,5 @@
-﻿using BiblioDomain.Entities;
+﻿using Biblio_DAL.Repositories;
+using BiblioDomain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,12 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BiblioDAL.Repositories {
-    public interface IBookRepository {
+    public interface IBookRepository : IGenericRepository<Book, int> {
 
         Book Create( Book book );
-        Book ReadOne( int id );
-        IEnumerable<Book> ReadAll();
         bool Update( int id, Book book );
-        bool Delete( int id );
     }
 }

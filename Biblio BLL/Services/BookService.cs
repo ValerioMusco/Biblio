@@ -21,7 +21,7 @@ namespace Biblio_BLL.Services {
         }
 
         public Book GetBook(int isbn ) {
-            return _bookRepository.ReadOne( isbn );
+            return _bookRepository.ReadOne(isbn);
         }
 
         public IEnumerable<Book> GetBooks() {
@@ -35,7 +35,7 @@ namespace Biblio_BLL.Services {
 
         public bool Delete(int isbn) {
 
-            return _bookRepository.Delete( isbn );
+            return _bookRepository.Delete(isbn);
         }
     }
 }

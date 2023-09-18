@@ -10,36 +10,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Biblio_DAL.Repositories {
-    public class BookRepository : IBookRepository {
+    public class BookRepository : GenericRepository<Book, int>, IBookRepository{
 
-        private readonly string _connection;
+        public BookRepository() : base("Book", "ISBN") {
 
-        public BookRepository() {
-
-            _connection = @"Server=DESKTOP-95QLTBL;Database=BiblioDB;Trusted_Connection=True;";
         }
 
-        private static void GenerateParameter( IDbCommand dbCommand, string parameterName, object? value ) {
-
-            IDataParameter parameter = dbCommand.CreateParameter();
-            parameter.ParameterName = parameterName;
-            parameter.Value = value ?? DBNull.Value;
-            dbCommand.Parameters.Add( parameter );
-        }
-
-        private static Book Convert( IDataRecord dataRecord ) {
-
-            return new Book {
-                Isbn = (int)dataRecord["ISBN"],
-                BookName = (string)dataRecord["BookName"],
-                Description = dataRecord["Description"] == DBNull.Value ? null : (string)dataRecord["Description"],
-                Quantity = (int)dataRecord["Quantity"],
-                Price = (decimal)dataRecord["Price"],
-                Genre = Enum.Parse<Genre>( (string)dataRecord["Genre"] )
-            };
-        }
-
-        public Book Create( Book book ) {
+        public override Book Create( Book book ) {
 
             using( IDbConnection connection = new SqlConnection( _connection ) ) {
 
@@ -71,47 +48,7 @@ namespace Biblio_DAL.Repositories {
             }
         }
 
-        public IEnumerable<Book> ReadAll() {
-            using( IDbConnection connection = new SqlConnection( _connection ) ) {
-
-                using( IDbCommand dbCommand = connection.CreateCommand() ) {
-
-                    dbCommand.CommandText = "SELECT * FROM Book";
-
-                    connection.Open();
-                    IDataReader reader = dbCommand.ExecuteReader();
-
-                    while( reader.Read() )
-                        yield return Convert( reader );
-                }
-            }
-        }
-
-        public Book ReadOne( int isbn ) {
-
-            using( IDbConnection connection = new SqlConnection( _connection ) ) {
-
-                using( IDbCommand dbCommand = connection.CreateCommand() ) {
-
-                    dbCommand.CommandText = "SELECT * FROM Book " +
-                                            "WHERE ISBN = @isbn";
-
-                    GenerateParameter( dbCommand, "isbn", isbn );
-
-                    connection.Open();
-
-                    IDataReader reader = dbCommand.ExecuteReader();
-                    if(!reader.Read() )
-                        throw new Exception( "Error" );
-
-                    Book newBook = Convert( reader );
-                    connection.Close();
-                    return newBook;
-                }
-            }
-        }
-
-        public bool Update( int isbn, Book book ) {
+        public override bool Update( int isbn, Book book ) {
 
             using(IDbConnection dbConnection = new SqlConnection(_connection)) {
 
@@ -140,21 +77,15 @@ namespace Biblio_DAL.Repositories {
             }
         }
 
-        public bool Delete( int isbn ) {
-
-            using(IDbConnection dbConnection = new SqlConnection(_connection) ) {
-
-                using(IDbCommand dbCommand = dbConnection.CreateCommand()) {
-
-                    dbCommand.CommandText = @"DELETE FROM Book 
-                                            WHERE ISBN = @isbn";
-
-                    GenerateParameter( dbCommand, "isbn", isbn );
-
-                    dbConnection.Open();
-                    return dbCommand.ExecuteNonQuery() == 1 ? true : false;
-                }
-            }
+        public override Book Convert( IDataRecord dataRecord ) {
+            return new Book {
+                Isbn = (int)dataRecord["ISBN"],
+                BookName = (string)dataRecord["BookName"],
+                Description = dataRecord["Description"] == DBNull.Value ? null : (string)dataRecord["Description"],
+                Quantity = (int)dataRecord["Quantity"],
+                Price = (decimal)dataRecord["Price"],
+                Genre = Enum.Parse<Genre>( (string)dataRecord["Genre"] )
+            };
         }
     }
 }

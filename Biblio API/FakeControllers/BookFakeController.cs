@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace Biblio_API.FakeControllers {
     public class BookFakeController {
